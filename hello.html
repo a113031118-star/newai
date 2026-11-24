@@ -3,12 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Antigravity 破冰成功！</title>
+  <title>Antigravity 破冰出氣筒 🥊</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     body {
@@ -16,93 +18,238 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #f6f8fd 0%, #f1f4f9 100%);
+      background: linear-gradient(135deg, #fceef0 0%, #e8effd 50%, #f3e7e9 100%);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
       padding: 20px;
+      overflow-x: hidden;
     }
 
+    /* 卡片本體 */
     .card {
+      position: relative;
       background: linear-gradient(135deg, #ffdde1 0%, #ee9ca7 50%, #a1c4fd 100%);
-      padding: 48px 36px;
-      border-radius: 28px;
-      box-shadow: 0 20px 40px rgba(161, 196, 253, 0.35),
-                  0 10px 20px rgba(238, 156, 167, 0.2);
+      padding: 44px 36px 40px;
+      border-radius: 32px;
+      box-shadow: 0 20px 50px rgba(238, 156, 167, 0.35),
+                  0 10px 25px rgba(161, 196, 253, 0.3);
       text-align: center;
       max-width: 440px;
       width: 100%;
-      backdrop-filter: blur(8px);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      backdrop-filter: blur(10px);
+      transition: transform 0.15s ease;
     }
 
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 24px 48px rgba(161, 196, 253, 0.45),
-                  0 12px 24px rgba(238, 156, 167, 0.25);
+    /* 被打時的卡片微震動 */
+    .card.shake {
+      animation: cardShake 0.18s ease-out;
+    }
+
+    @keyframes cardShake {
+      0% { transform: translateY(0); }
+      25% { transform: translateY(3px) rotate(0.8deg); }
+      50% { transform: translateY(-2px) rotate(-0.8deg); }
+      75% { transform: translateY(1px) rotate(0.4deg); }
+      100% { transform: translateY(0) rotate(0deg); }
+    }
+
+    /* 音效切換按鈕 */
+    .sound-toggle {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.55);
+      border: none;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      color: #4a5568;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .sound-toggle:hover {
+      background: rgba(255, 255, 255, 0.85);
+      transform: scale(1.05);
     }
 
     .title {
-      font-size: 2rem;
-      font-weight: 700;
+      font-size: 1.9rem;
+      font-weight: 800;
       color: #2d3748;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       letter-spacing: 0.5px;
-    }
-
-    .subtitle {
-      font-size: 1rem;
-      color: #4a5568;
-      margin-bottom: 32px;
-      line-height: 1.5;
-    }
-
-    .glow-btn {
-      position: relative;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: #ffffff;
-      border: none;
-      padding: 14px 36px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      border-radius: 50px;
-      cursor: pointer;
-      outline: none;
-      box-shadow: 0 0 20px rgba(118, 75, 162, 0.5),
-                  0 4px 15px rgba(102, 126, 234, 0.4);
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      letter-spacing: 0.5px;
-    }
-
-    .glow-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(118, 75, 162, 0.8),
-                  0 0 45px rgba(102, 126, 234, 0.6);
-    }
-
-    .glow-btn:active {
-      transform: scale(0.98);
-    }
-
-    .result-container {
-      margin-top: 28px;
-      min-height: 80px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 8px;
     }
 
+    .subtitle {
+      font-size: 0.95rem;
+      color: #4a5568;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    /* 出氣筒容器與吊繩視覺 */
+    .punching-container {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    /* 懸掛繩索/扣環 */
+    .punch-chain {
+      width: 8px;
+      height: 24px;
+      background: repeating-linear-gradient(
+        to bottom,
+        #718096,
+        #718096 4px,
+        #4a5568 4px,
+        #4a5568 8px
+      );
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      margin-bottom: -4px;
+      z-index: 1;
+    }
+
+    /* 出氣筒按鈕 */
+    .punch-bag {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 170px;
+      height: 170px;
+      border-radius: 50% 50% 45% 45% / 40% 40% 60% 60%;
+      background: radial-gradient(circle at 35% 30%, #ff7b7b, #e53e3e 65%, #9b1c1c 100%);
+      border: 4px solid #fff;
+      cursor: pointer;
+      box-shadow: 0 15px 30px rgba(155, 28, 28, 0.45),
+                  inset 0 6px 12px rgba(255, 255, 255, 0.5),
+                  inset 0 -8px 16px rgba(0, 0, 0, 0.35);
+      transition: transform 0.1s ease, filter 0.1s ease;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      animation: gentleSwing 3s ease-in-out infinite alternate;
+      transform-origin: top center;
+    }
+
+    /* 平常輕微搖擺 */
+    @keyframes gentleSwing {
+      0% { transform: rotate(-3deg); }
+      100% { transform: rotate(3deg); }
+    }
+
+    /* 滑鼠懸停時微激動 */
+    .punch-bag:hover {
+      filter: brightness(1.06);
+      transform: scale(1.03);
+    }
+
+    /* 挨揍瞬間受擊形變 (Squash & Stretch) */
+    .punch-bag.punched {
+      animation: punchImpact 0.28s cubic-bezier(0.18, 0.89, 0.32, 1.28) !important;
+    }
+
+    @keyframes punchImpact {
+      0% {
+        transform: scale(1, 1) rotate(0deg);
+      }
+      20% {
+        transform: scale(1.22, 0.72) translateY(12px) rotate(var(--punch-rot, -12deg));
+        filter: brightness(1.25) saturate(1.2);
+      }
+      50% {
+        transform: scale(0.88, 1.15) translateY(-8px) rotate(calc(var(--punch-rot, -12deg) * -0.6));
+      }
+      75% {
+        transform: scale(1.05, 0.95) translateY(3px) rotate(calc(var(--punch-rot, -12deg) * 0.3));
+      }
+      100% {
+        transform: scale(1, 1) translateY(0) rotate(0deg);
+      }
+    }
+
+    /* 沙包表情 */
+    .bag-face {
+      font-size: 2.2rem;
+      transition: transform 0.1s;
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    /* 沙包標籤文字 */
+    .bag-label {
+      margin-top: 6px;
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+      letter-spacing: 1px;
+    }
+
+    /* 挨打飄出的衝擊字詞與爆炸特效 */
+    .hit-effect {
+      position: absolute;
+      pointer-events: none;
+      font-weight: 900;
+      font-size: 1.4rem;
+      color: #fff;
+      text-shadow: 0 0 8px #ff4757, 0 3px 0 #2f3542;
+      animation: hitFly 0.6s ease-out forwards;
+      z-index: 10;
+      white-space: nowrap;
+    }
+
+    @keyframes hitFly {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.6) rotate(var(--rot, 0deg));
+      }
+      40% {
+        transform: translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -40px))) scale(1.3) rotate(var(--rot, 0deg));
+      }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx, 0px) * 1.5), calc(-50% + var(--dy, -40px) * 1.6)) scale(1.1) rotate(var(--rot, 0deg));
+      }
+    }
+
+    /* 結果與數據區域 */
+    .result-container {
+      margin-top: 20px;
+      min-height: 95px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
     .counter {
       font-size: 0.95rem;
-      font-weight: 600;
-      color: #3b4252;
-      background: rgba(255, 255, 255, 0.65);
-      padding: 4px 16px;
+      font-weight: 700;
+      color: #2d3748;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 6px 18px;
       border-radius: 20px;
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       opacity: 0;
       transform: translateY(6px);
-      transition: all 0.3s ease;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
     .counter.show {
@@ -112,16 +259,17 @@
 
     .quote {
       font-size: 1.05rem;
-      font-weight: 500;
+      font-weight: 600;
       color: #1f2937;
       line-height: 1.6;
-      background: rgba(255, 255, 255, 0.8);
-      padding: 12px 20px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      background: rgba(255, 255, 255, 0.88);
+      padding: 12px 22px;
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
       opacity: 0;
       transform: translateY(10px);
-      transition: all 0.4s ease;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      max-width: 380px;
     }
 
     .quote.show {
@@ -131,11 +279,21 @@
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1 class="title">Antigravity 破冰成功！</h1>
-    <p class="subtitle">點擊下方按鈕，接收今天專屬的能量與祝福 ✨</p>
+  <div class="card" id="card">
+    <button id="soundToggle" class="sound-toggle" title="切換音效">
+      <span id="soundIcon">🔊</span> <span id="soundText">音效開</span>
+    </button>
+
+    <h1 class="title">Antigravity 破冰出氣筒 🥊</h1>
+    <p class="subtitle">感到心累或有壓力？用力扁下去，把負能量通通打飛！</p>
     
-    <button id="actionBtn" class="glow-btn">點擊領取祝福</button>
+    <div class="punching-container">
+      <div class="punch-chain"></div>
+      <button id="punchBag" class="punch-bag" aria-label="出氣筒按鈕">
+        <span id="bagFace" class="bag-face">(`へ´*)</span>
+        <span class="bag-label">揍我出氣！</span>
+      </button>
+    </div>
     
     <div class="result-container">
       <div id="counter" class="counter"></div>
@@ -144,39 +302,189 @@
   </div>
 
   <script>
+    // 幽默抒壓的出氣小語
     const quotes = [
-      "✨ 每一步都是向夢想邁進的一大步！",
-      "🌟 今天也是元氣滿滿的一天，繼續加油！",
-      "💡 程式碼就像魔法，你就是創造奇蹟的魔法師！",
-      "🚀 你比想像中更有潛力，勇敢探索未知的可能！",
-      "🌈 保持好奇心，前方的風景一定超乎你的想像！",
-      "💪 休息一下，深呼吸，你已經做得很棒了！",
-      "🔥 點亮靈感，打造屬於你的精彩世界！",
-      "🎯 專注當下，微小的積累終將匯聚成巨大的成就！"
+      "💥 嗷嗚！這記鐵拳夠力，壓力直接被打飛一半！",
+      "😮‍💨 呼～把所有的委屈跟不爽通通打出來吧！超舒暢！",
+      "🩹 痛痛痛！但看到你眉頭鬆開，這拳挨得值了！",
+      "🚀 重拳暴擊！Bug 退散！水逆直接清空！",
+      "🥊 打得漂亮！你的怒氣值已成功轉化為滿滿正能量！",
+      "💨 呼氣～吸氣～感覺一下肩膀是不是瞬間放鬆了？",
+      "😆 別客氣，我是宇宙最耐扁的出氣筒，隨時歡迎再來！",
+      "✨ 砰！爛人爛事全都退散，今天又是屬於你的好日子！",
+      "🔥 拳拳到肉！把負能量踩在腳下，準備滿血復活！",
+      "🎯 爽快！揮出一記漂亮的右勾拳，壞心情全部清零！"
     ];
 
+    // 挨打飄出的小特效字樣
+    const hitWords = [
+      "💥 砰！", "POW!", "💢 爽！", "💨 呼～", 
+      "🥊 暴擊！", "BAM!", "⚡️ -999", "痛痛痛！", 
+      "👊 漂亮！", "🔥 飛走啦！"
+    ];
+
+    // 表情包狀態
+    const normalFace = "(`へ´*)";
+    const hitFaces = ["( >д< )", "( X_X )", "( TДT )", "( ×ω× )", "( ﾟДﾟ)"];
+
     let count = 0;
-    const btn = document.getElementById('actionBtn');
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    const card = document.getElementById('card');
+    const punchBag = document.getElementById('punchBag');
+    const bagFace = document.getElementById('bagFace');
     const counterEl = document.getElementById('counter');
     const quoteEl = document.getElementById('quote');
+    const soundToggle = document.getElementById('soundToggle');
+    const soundIcon = document.getElementById('soundIcon');
+    const soundText = document.getElementById('soundText');
 
-    btn.addEventListener('click', () => {
+    // 切換音效開關
+    soundToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      soundEnabled = !soundEnabled;
+      soundIcon.textContent = soundEnabled ? "🔊" : "🔇";
+      soundText.textContent = soundEnabled ? "音效開" : "靜音";
+    });
+
+    // Web Audio 合成打擊音效（免外部資源，離線可用）
+    function playPunchSound() {
+      if (!soundEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        const now = audioCtx.currentTime;
+
+        // 低頻打擊重音 (Kick/Thud)
+        const osc = audioCtx.createOscillator();
+        const oscGain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(35, now + 0.12);
+
+        oscGain.gain.setValueAtTime(1, now);
+        oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+
+        osc.connect(oscGain);
+        oscGain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.15);
+
+        // 破空破擊雜訊 (Noise burst)
+        const bufferSize = audioCtx.sampleRate * 0.08;
+        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = noiseBuffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+
+        const whiteNoise = audioCtx.createBufferSource();
+        whiteNoise.buffer = noiseBuffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1000, now);
+        filter.frequency.exponentialRampToValueAtTime(200, now + 0.08);
+
+        const noiseGain = audioCtx.createGain();
+        noiseGain.gain.setValueAtTime(0.6, now);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+
+        whiteNoise.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(audioCtx.destination);
+
+        whiteNoise.start(now);
+        whiteNoise.stop(now + 0.08);
+      } catch (err) {
+        // 音效失敗時靜默忽略
+      }
+    }
+
+    // 觸發打擊
+    punchBag.addEventListener('click', (e) => {
       count++;
-      
-      // 更新點擊次數
-      counterEl.textContent = `已點擊：${count} 次`;
+
+      // 播放打擊音效
+      playPunchSound();
+
+      // 隨機搖擺受擊角度
+      const randomRot = (Math.random() - 0.5) * 36;
+      punchBag.style.setProperty('--punch-rot', `${randomRot}deg`);
+
+      // 觸發沙包凹陷彈跳動畫
+      punchBag.classList.remove('punched');
+      void punchBag.offsetWidth; // 強制重繪以重啟動畫
+      punchBag.classList.add('punched');
+
+      // 卡片震動
+      card.classList.remove('shake');
+      void card.offsetWidth;
+      card.classList.add('shake');
+
+      // 暫時變換痛苦/搞笑表情
+      const hitFace = hitFaces[Math.floor(Math.random() * hitFaces.length)];
+      bagFace.textContent = hitFace;
+      clearTimeout(punchBag._faceTimer);
+      punchBag._faceTimer = setTimeout(() => {
+        bagFace.textContent = normalFace;
+      }, 450);
+
+      // 噴射打擊特效浮字
+      createHitEffect(e);
+
+      // 更新出氣次數與累積宣洩百分比
+      counterEl.innerHTML = `🥊 已連續揮拳：<strong>${count}</strong> 次 ｜ 壓力值：<span style="color:#e53e3e;">-${count * 20}%</span>`;
       counterEl.classList.add('show');
 
-      // 隨機選取鼓勵小語
+      // 隨機切換出氣舒壓小語
       const randomIndex = Math.floor(Math.random() * quotes.length);
       quoteEl.classList.remove('show');
-      
-      // 稍微延遲產生換行漸顯動效
       setTimeout(() => {
         quoteEl.textContent = quotes[randomIndex];
         quoteEl.classList.add('show');
-      }, 100);
+      }, 60);
     });
+
+    // 建立浮動打擊特效元素
+    function createHitEffect(e) {
+      const effect = document.createElement('div');
+      effect.className = 'hit-effect';
+      
+      const randomWord = hitWords[Math.floor(Math.random() * hitWords.length)];
+      effect.textContent = randomWord;
+
+      // 隨機彈飛方向
+      const dx = (Math.random() - 0.5) * 120;
+      const dy = -40 - Math.random() * 50;
+      const rot = (Math.random() - 0.5) * 40;
+
+      effect.style.setProperty('--dx', `${dx}px`);
+      effect.style.setProperty('--dy', `${dy}px`);
+      effect.style.setProperty('--rot', `${rot}deg`);
+
+      // 定位在點擊位置或按鈕中央
+      const rect = punchBag.getBoundingClientRect();
+      const cardRect = card.getBoundingClientRect();
+      
+      const clickX = e ? (e.clientX - cardRect.left) : (rect.left - cardRect.left + rect.width / 2);
+      const clickY = e ? (e.clientY - cardRect.top) : (rect.top - cardRect.top + rect.height / 2);
+
+      effect.style.left = `${clickX}px`;
+      effect.style.top = `${clickY}px`;
+
+      card.appendChild(effect);
+
+      setTimeout(() => {
+        effect.remove();
+      }, 650);
+    }
   </script>
 </body>
 </html>
